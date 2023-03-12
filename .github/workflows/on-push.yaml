@@ -1,4 +1,4 @@
-name: on push
+name: push
 on: [push]
 jobs:
   test:
@@ -6,10 +6,3 @@ jobs:
     steps:
       - name: Checkout code
       - uses: actions/checkout@v2
-
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v3
-        with:
-          go-version-file: 'go.mod'
-          check-latest: true
-      - run: go version
