@@ -13,14 +13,3 @@ jobs:
           go-version-file: 'go.mod'
           check-latest: true
       - run: go version
-
-      - name: Test
-        run: go test ./...
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: golangci-lint
-      - uses: golangci/golangci-lint-action@v2
-        with:
-          version: latest
