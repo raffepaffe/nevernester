@@ -17,3 +17,10 @@ jobs:
 
       - name: Test
         run: go test ./...
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
