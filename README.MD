@@ -52,7 +52,7 @@ func getPrice(rows []OrderRow) int {
 ## Installation & usage
 
 ```
-$go install https://github.com/raffepaffe/nevernester@latest
+$go install github.com/raffepaffe/nevernester@latest
 $nevernester ./...
 ```
 

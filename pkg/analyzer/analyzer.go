@@ -89,12 +89,12 @@ type nesterVisitor struct {
 	Colum       int
 	Line        int
 	FileSet     *token.FileSet
-	SkipRow     map[token.Position]bool
+	SkipRow     map[int]bool
 }
 
 func newNesterVisitor(fd *ast.FuncDecl, fs *token.FileSet) nesterVisitor {
 	absPosition := fs.PositionFor(fd.Pos(), false)
-	sr := make(map[token.Position]bool, 0)
+	sr := make(map[int]bool, 0)
 	nv := nesterVisitor{
 		Indentation: 0,
 		Colum:       absPosition.Column,
@@ -116,40 +116,58 @@ func (nv *nesterVisitor) Visit(n ast.Node) ast.Visitor {
 		return nv
 	}
 
-	nv.skipElseStatement(n)
-
-	absPosition := nv.FileSet.PositionFor(n.Pos(), true)
-	if absPosition.Line != nv.Line {
-		nv.Line = absPosition.Line
-		if absPosition.Column > nv.Colum {
-			nv.addIndentation(absPosition)
+	startPosition := nv.FileSet.PositionFor(n.Pos(), true)
+	endPosition := nv.FileSet.PositionFor(n.End(), true)
+	if startPosition.Line != nv.Line {
+		nv.Line = startPosition.Line
+		if startPosition.Column > nv.Colum {
+			nv.addIndentation(startPosition, endPosition)
 		}
+		nv.addNodeToSkip(n)
 	}
 
 	return nv
 }
 
-func (nv *nesterVisitor) addIndentation(absPosition token.Position) {
-	_, found := nv.SkipRow[absPosition]
-	if !found {
+func (nv *nesterVisitor) addIndentation(startPosition, endPosition token.Position) {
+	if nv.usePosition(startPosition, endPosition) {
 		nv.Indentation++
-		nv.Colum = absPosition.Column
+		nv.Colum = startPosition.Column
 	}
 }
 
-// skipElseStatement finds else statements and excludes them from
-// the indentation counting. The position of the else is saved.
-func (nv *nesterVisitor) skipElseStatement(n ast.Node) {
-	if ifBlock, ok := n.(*ast.IfStmt); ok {
-		if ifBlock.Else != nil {
-			nv.addRowToSkip(ifBlock.Else.Pos())
+func (nv *nesterVisitor) usePosition(positions ...token.Position) bool {
+	for _, position := range positions {
+		if _, found := nv.SkipRow[position.Line]; found {
+			return false
 		}
 	}
+
+	return true
 }
 
-func (nv *nesterVisitor) addRowToSkip(pos token.Pos) {
-	if pos.IsValid() {
-		elsePosition := nv.FileSet.PositionFor(pos, true)
-		nv.SkipRow[elsePosition] = true
+// addNodeToSkip finds rows for the given node and excludes them from
+// the indentation counting. If an expression or statement is
+// spread out over several rows, all rows are excluded.
+func (nv *nesterVisitor) addNodeToSkip(n ast.Node) {
+	rowsToSkip := make([]int, 0)
+	switch n.(type) {
+	case *ast.ExprStmt, *ast.AssignStmt:
+		startPosition := nv.FileSet.PositionFor(n.Pos(), true)
+		endPosition := nv.FileSet.PositionFor(n.End(), true)
+		for i := startPosition.Line; i <= endPosition.Line; i++ {
+			rowsToSkip = append(rowsToSkip, i)
+		}
+	default:
+		position := nv.FileSet.PositionFor(n.End(), true)
+		rowsToSkip = append(rowsToSkip, position.Line)
+	}
+
+	nv.addRowToSkip(rowsToSkip...)
+}
+
+func (nv *nesterVisitor) addRowToSkip(positions ...int) {
+	for _, position := range positions {
+		nv.SkipRow[position] = true
 	}
 }
