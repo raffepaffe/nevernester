@@ -26,7 +26,7 @@ var (
 
 //nolint:gochecknoinits
 func init() {
-	flagSet.IntVar(&maxNesting, "maxNesting", defaultMaxNesting, "max nesting of the function can have")
+	flagSet.IntVar(&maxNesting, "maxNesting", defaultMaxNesting, "max nesting the function can have")
 	flagSet.BoolVar(&skipTests, "skipTests", false, "should functions starting with Test be checked")
 	flagSet.BoolVar(&skipBenchmarks, "skipBenchmarks", false, "should functions starting with Benchmark be checked")
 }
@@ -107,10 +107,10 @@ func newNesterVisitor(fd *ast.FuncDecl, fs *token.FileSet) nesterVisitor {
 }
 
 // Visit checks if a Node should be counted as a new indentation.
-// First, nodes that should be skipped are identified.
-// After that, the position of the node is determined. Then, if the node is on a new line
+// First, the position of the node is determined. Then, if the node is on a new line
 // and the column count (indentation) of the node is larger than the
-// last node, the indentation counter is added by one.
+// last saved node, the indentation counter is added by one.
+// After that, nodes that should be skipped are identified.
 func (nv *nesterVisitor) Visit(n ast.Node) ast.Visitor {
 	if n == nil {
 		return nv

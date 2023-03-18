@@ -80,16 +80,14 @@ You can change that to whatever you want.
 
 ```
 $nevernester -skipTests=true -skipBenchmarks=true -maxNesting 6 ./...
-/usr/local/go/src/net/dnsclient_unix.go:595:1: calculated nesting for function goLookupIPCNAMEOrder is 7, max is 6
+/usr/local/go/src/runtime/map.go:1152:1: calculated nesting for function evacuate is 7, max is 6
 /usr/local/go/src/crypto/x509/parser.go:643:1: calculated nesting for function processExtensions is 7, max is 6
-/usr/local/go/src/crypto/tls/handshake_messages.go:867:1: calculated nesting for function marshal is 7, max is 6
-/usr/local/go/src/crypto/tls/handshake_messages.go:1085:1: calculated nesting for function marshal is 8, max is 6
-/usr/local/go/src/crypto/tls/handshake_messages.go:1336:1: calculated nesting for function marshalCertificate is 9, max is 6
+/usr/local/go/src/encoding/xml/xml.go:544:1: calculated nesting for function rawToken is 7, max is 6
+/usr/local/go/src/regexp/syntax/parse.go:894:1: calculated nesting for function parse is 7, max is 6
 /usr/local/go/src/go/parser/parser.go:1055:1: calculated nesting for function parseMethodSpec is 7, max is 6
-/usr/local/go/src/go/types/decl.go:836:1: calculated nesting for function declStmt is 7, max is 6
+/usr/local/go/src/image/draw/draw.go:956:1: calculated nesting for function drawPaletted is 7, max is 6
 /usr/local/go/src/image/jpeg/scan.go:51:1: calculated nesting for function processSOS is 8, max is 6
-/usr/local/go/src/image/png/writer.go:304:1: calculated nesting for function writeImage is 7, max is 6
-/usr/local/go/src/database/sql/fakedb_test.go:881:1: calculated nesting for function QueryContext is 8, max is 6
+/usr/local/go/src/database/sql/fakedb_test.go:881:1: calculated nesting for function QueryContext is 7, max is 6
 /usr/local/go/src/go/parser/parser_test.go:360:1: calculated nesting for function getField is 9, max is 6
 /usr/local/go/src/runtime/pprof/pprof_test.go:568:1: calculated nesting for function matchAndAvoidStacks is 7, max is 6
 ```
@@ -98,15 +96,24 @@ $nevernester -skipTests=true -skipBenchmarks=true -maxNesting 6 ./...
 </details>
 
 <details>
-  <summary>running nevernester on golangci-lint 1.51.2 source with skipTests, skipBenchmarks and maxNesting set to 5</summary>
+  <summary>running nevernester on golangci-lint 1.51.2 source with skipTests, skipBenchmarks with default nesting</summary>
 
 ```
-$nevernester -skipTests=true -skipBenchmarks=true -maxNesting 5 ./...
-/Users/ralf/code/temp/golangci-lint/pkg/golinters/goanalysis/runners.go:126:1: calculated nesting for function saveIssuesToCache is 6, max is 5
-/Users/ralf/code/temp/golangci-lint/pkg/golinters/deadcode.go:17:1: calculated nesting for function NewDeadcode is 6, max is 5
-/Users/ralf/code/temp/golangci-lint/pkg/golinters/gocritic.go:169:1: calculated nesting for function runGocriticOnFile is 6, max is 5
-/Users/ralf/code/temp/golangci-lint/pkg/golinters/gofmt_common.go:237:1: calculated nesting for function extractIssuesFromPatch is 6, max is 5
-/Users/ralf/code/temp/golangci-lint/pkg/commands/version.go:35:1: calculated nesting for function initVersion is 6, max is 5
+$nevernester -skipTests=true -skipBenchmarks=true ./...
+golangci-lint/pkg/golinters/goanalysis/errors.go:22:1: calculated nesting for function buildIssuesFromIllTypedError is 5, max is 4
+golangci-lint/pkg/golinters/goanalysis/runners.go:126:1: calculated nesting for function saveIssuesToCache is 5, max is 4
+golangci-lint/pkg/golinters/gofmt_common.go:237:1: calculated nesting for function extractIssuesFromPatch is 5, max is 4
+golangci-lint/pkg/golinters/nakedret.go:109:1: calculated nesting for function Visit is 5, max is 4
+```
+</details>
+
+<details>
+  <summary>running nevernester on opentelemetry-go 1.15.0-rc.1 source with default settings</summary>
+
+```
+$nevernester ./...
+opentelemetry-go/attribute/set_test.go:51:1: calculated nesting for function TestSetDedup is 5, max is 4
+opentelemetry-go/exporters/otlp/internal/envconfig/envconfig_test.go:59:1: calculated nesting for function TestEnvConfig is 6, max is 4
 ```
 </details>
 
@@ -114,8 +121,10 @@ $nevernester -skipTests=true -skipBenchmarks=true -maxNesting 5 ./...
 
 The idea for this linter came after I watched [this video](https://www.youtube.com/watch?v=CFRhGnuXG-4) discussing 
 nesting in code.  
+
 Before I started to code I looked at other linters like [cyclop](https://github.com/bkielbasa/cyclop), 
 [nilnil](https://github.com/Antonboom/nilnil) and [wrapcheck](https://github.com/tomarrell/wrapcheck).  
+
 Credit also goes to (in alphabetic order) Anders, Björn, Hampus and Oscar for 
 helping me becoming a better Go developer.
 
