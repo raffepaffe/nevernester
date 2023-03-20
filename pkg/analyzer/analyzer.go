@@ -149,25 +149,43 @@ func (nv *nesterVisitor) usePosition(positions ...token.Position) bool {
 // addNodeToSkip finds rows for the given node and excludes them from
 // the indentation counting. If an expression or statement is
 // spread out over several rows, all rows are excluded.
+//
+//nolint:all
 func (nv *nesterVisitor) addNodeToSkip(n ast.Node) {
 	rowsToSkip := make([]int, 0)
 	switch n.(type) {
 	case *ast.ExprStmt, *ast.AssignStmt:
-		startPosition := nv.FileSet.PositionFor(n.Pos(), true)
-		endPosition := nv.FileSet.PositionFor(n.End(), true)
-		for i := startPosition.Line; i <= endPosition.Line; i++ {
-			rowsToSkip = append(rowsToSkip, i)
-		}
+		rowsToSkip = nv.findRowsToSkip(n)
+	case *ast.IfStmt:
+		ifStmt := n.(*ast.IfStmt)
+		rowsToSkip = append(rowsToSkip, nv.FileSet.PositionFor(ifStmt.Pos(), true).Line)
+		rowsToSkip = append(rowsToSkip, nv.FileSet.PositionFor(ifStmt.End(), true).Line)
+		rowsToSkip = append(rowsToSkip, nv.findRowsToSkip(ifStmt.Init)...)
+		rowsToSkip = append(rowsToSkip, nv.findRowsToSkip(ifStmt.Cond)...)
 	default:
 		position := nv.FileSet.PositionFor(n.End(), true)
 		rowsToSkip = append(rowsToSkip, position.Line)
 	}
 
-	nv.addRowToSkip(rowsToSkip...)
+	nv.addRowsToSkip(rowsToSkip...)
 }
 
-func (nv *nesterVisitor) addRowToSkip(positions ...int) {
+func (nv *nesterVisitor) addRowsToSkip(positions ...int) {
 	for _, position := range positions {
 		nv.SkipRow[position] = true
 	}
+}
+
+func (nv *nesterVisitor) findRowsToSkip(n ast.Node) []int {
+	rowsToSkip := make([]int, 0)
+	if n == nil {
+		return rowsToSkip
+	}
+	startPosition := nv.FileSet.PositionFor(n.Pos(), true)
+	endPosition := nv.FileSet.PositionFor(n.End(), true)
+	for i := startPosition.Line; i <= endPosition.Line; i++ {
+		rowsToSkip = append(rowsToSkip, i)
+	}
+
+	return rowsToSkip
 }
