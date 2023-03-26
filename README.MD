@@ -1,6 +1,6 @@
 # Nevernester
 
-Nevernester is a Go linter that finds nesting in functions. Many levels of nesting
+Nevernester is a Go linter that finds nesting in golang functions. Many levels of nesting
 reduces readability and adds cognitive load.
 
 ## Why nevernester?
@@ -58,12 +58,12 @@ $nevernester ./...
 
 The default level of nesting is 4. If you want another level, say 5,  use the maxNesting option
 ```
-$nevernester -maxNesting 5 ./...
+$nevernester -max-nesting 5 ./...
 ```
 
 If you want to skip checking tests or benchmarks use the skipTests and skipBenchmarks options
 ```
-$nevernester -skipTests=true -skipBenchmarks=true ./...
+$nevernester -skip-tests=true -skip-benchmarks=true ./...
 ```
 ### Still not convinced?
 Linus Torvalds is pretty good developer and the 
@@ -76,10 +76,10 @@ You can change that to whatever you want.
 
 ### Examples
 <details>
-  <summary>running nevernester on go 1.20.1 source with skipTests, skipBenchmarks and maxNesting set to 6</summary>
+  <summary>running nevernester on go 1.20.2 source with skip-tests, skip-benchmarks and max-nesting set to 6</summary>
 
 ```
-$nevernester -skipTests=true -skipBenchmarks=true -maxNesting 6 ./...
+$nevernester -skip-tests=true -skip-benchmarks=true -max-nesting 6 ./...
 /usr/local/go/src/runtime/map.go:1152:1: calculated nesting for function evacuate is 7, max is 6
 /usr/local/go/src/crypto/x509/parser.go:643:1: calculated nesting for function processExtensions is 7, max is 6
 /usr/local/go/src/encoding/xml/xml.go:544:1: calculated nesting for function rawToken is 7, max is 6
@@ -96,10 +96,10 @@ $nevernester -skipTests=true -skipBenchmarks=true -maxNesting 6 ./...
 </details>
 
 <details>
-  <summary>running nevernester on golangci-lint 1.51.2 source with skipTests, skipBenchmarks with default nesting</summary>
+  <summary>running nevernester on golangci-lint 1.52.1 source with skip-tests, skip-benchmarks with default nesting</summary>
 
 ```
-$nevernester -skipTests=true -skipBenchmarks=true ./...
+$nevernester -skip-tests=true -skip-benchmarks=true ./...
 golangci-lint/pkg/golinters/goanalysis/errors.go:22:1: calculated nesting for function buildIssuesFromIllTypedError is 5, max is 4
 golangci-lint/pkg/golinters/goanalysis/runners.go:126:1: calculated nesting for function saveIssuesToCache is 5, max is 4
 golangci-lint/pkg/golinters/gofmt_common.go:237:1: calculated nesting for function extractIssuesFromPatch is 5, max is 4
@@ -108,7 +108,7 @@ golangci-lint/pkg/golinters/nakedret.go:109:1: calculated nesting for function V
 </details>
 
 <details>
-  <summary>running nevernester on opentelemetry-go 1.15.0-rc.1 source with default settings</summary>
+  <summary>running nevernester on opentelemetry-go 1.15.0-rc.2 source with default settings</summary>
 
 ```
 $nevernester ./...
@@ -124,6 +124,8 @@ nesting in code.
 
 Before I started to code I looked at other linters like [cyclop](https://github.com/bkielbasa/cyclop), 
 [nilnil](https://github.com/Antonboom/nilnil) and [wrapcheck](https://github.com/tomarrell/wrapcheck).  
+
+Special thanks to Björn for helping out with testing.
 
 Credit also goes to (in alphabetic order) Anders, Björn, Hampus and Oscar for 
 helping me becoming a better Go developer.
