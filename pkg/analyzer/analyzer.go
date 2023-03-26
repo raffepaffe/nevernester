@@ -21,17 +21,19 @@ var (
 	maxNesting     int
 	skipTests      bool
 	skipBenchmarks bool
-	flagSet        flag.FlagSet
 )
 
-//nolint:gochecknoinits
-func init() {
-	flagSet.IntVar(&maxNesting, "maxNesting", defaultMaxNesting, "max nesting the function can have")
-	flagSet.BoolVar(&skipTests, "skipTests", false, "should functions starting with Test be checked")
-	flagSet.BoolVar(&skipBenchmarks, "skipBenchmarks", false, "should functions starting with Benchmark be checked")
+func parseFlags() flag.FlagSet {
+	flagSet := flag.NewFlagSet("nevernester", flag.ContinueOnError)
+	flagSet.IntVar(&maxNesting, "max-nesting", defaultMaxNesting, "max nesting the function can have")
+	flagSet.BoolVar(&skipTests, "skip-tests", false, "should functions starting with Test be checked")
+	flagSet.BoolVar(&skipBenchmarks, "skip-benchmarks", false, "should functions starting with Benchmark be checked")
+
+	return *flagSet
 }
 
 func New() *analysis.Analyzer {
+	flagSet := parseFlags()
 	a := &analysis.Analyzer{
 		Name:     name,
 		Doc:      doc,
