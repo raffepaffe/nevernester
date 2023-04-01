@@ -1,6 +1,9 @@
 package below_four
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+)
 
 type Hero struct {
 	Kind string
@@ -40,4 +43,16 @@ func findDiffs(pair pair) ([]Hero, error) {
 	}
 
 	return diffs, nil
+}
+
+func aHandler() http.HandlerFunc {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			if ctx == nil {
+				w.WriteHeader(500)
+				return
+			}
+
+		})
 }

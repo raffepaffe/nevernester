@@ -119,11 +119,10 @@ func (nv *nesterVisitor) Visit(n ast.Node) ast.Visitor {
 	}
 
 	startPosition := nv.FileSet.PositionFor(n.Pos(), true)
-	endPosition := nv.FileSet.PositionFor(n.End(), true)
 	if startPosition.Line != nv.Line {
 		nv.Line = startPosition.Line
 		if startPosition.Column > nv.Colum {
-			nv.addIndentation(startPosition, endPosition)
+			nv.addIndentation(startPosition)
 		}
 		nv.addNodeToSkip(n)
 	}
@@ -131,8 +130,8 @@ func (nv *nesterVisitor) Visit(n ast.Node) ast.Visitor {
 	return nv
 }
 
-func (nv *nesterVisitor) addIndentation(startPosition, endPosition token.Position) {
-	if nv.usePosition(startPosition, endPosition) {
+func (nv *nesterVisitor) addIndentation(startPosition token.Position) {
+	if nv.usePosition(startPosition) {
 		nv.Indentation++
 		nv.Colum = startPosition.Column
 	}
@@ -164,6 +163,9 @@ func (nv *nesterVisitor) addNodeToSkip(n ast.Node) {
 		rowsToSkip = append(rowsToSkip, nv.FileSet.PositionFor(ifStmt.End(), true).Line)
 		rowsToSkip = append(rowsToSkip, nv.findRowsToSkip(ifStmt.Init)...)
 		rowsToSkip = append(rowsToSkip, nv.findRowsToSkip(ifStmt.Cond)...)
+		if ifStmt.Else != nil {
+			rowsToSkip = append(rowsToSkip, nv.FileSet.PositionFor(ifStmt.Else.Pos(), true).Line)
+		}
 	default:
 		position := nv.FileSet.PositionFor(n.End(), true)
 		rowsToSkip = append(rowsToSkip, position.Line)
