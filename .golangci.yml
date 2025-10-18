@@ -1,25 +1,15 @@
-run:
-  skip-dirs:
-    - examples
+version: 2
 
 linters:
   enable-all: true
   disable:
-    - interfacer
-    - structcheck
-    - deadcode
-    - nosnakecase
-    - ifshort
-    - golint
-    - scopelint
-    - exhaustivestruct
-    - maligned
-    - varcheck
-    - rowserrcheck
-    - wastedassign
-    - gci
-    - wsl
-    - exhaustruct
-    - paralleltest
-    - testpackage
-    - varnamelen
+    - staticcheck
+  exclusions:
+    rules:
+      - path: above_*
+        linters:
+          - unused
+      - path: below_*
+        linters:
+          - unused
+
