@@ -45,7 +45,7 @@ func New() *analysis.Analyzer {
 	return a
 }
 
-func run(pass *analysis.Pass) (interface{}, error) {
+func run(pass *analysis.Pass) (any, error) {
 	for _, file := range pass.Files {
 		ast.Inspect(file, func(node ast.Node) bool {
 			fs := pass.Fset
