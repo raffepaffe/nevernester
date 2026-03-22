@@ -15,7 +15,7 @@ func nestedFuncThatIsNested2Levels() {
 
 func ifNesting2Levels() {
 	byt := []byte(`{"num":6.13,"strs":["a","b"]}`)
-	var dat map[string]interface{}
+	var dat map[string]any
 	if err := json.Unmarshal(
 		byt, &dat); err != nil {
 		panic(err)
